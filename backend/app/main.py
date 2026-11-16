@@ -10,10 +10,10 @@ from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy import text
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 import jwt
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from app.security import verificar_contrasena, crear_token, verificar_token
+from app.security import crear_hash, verificar_contrasena, crear_token, verificar_token
 
 
 # CONEXION CON POSTGRESQL
@@ -40,8 +40,57 @@ class Settings(BaseSettings):
 
     whatsapp_verify_token: str = ""
 
+    # Alta única para una instalación cloud vacía. Estas variables se deben
+    # definir solo en el proveedor seguro y eliminarse tras el primer acceso.
+    bootstrap_admin_name: str = "Administrador inicial"
+    bootstrap_admin_username: str = ""
+    bootstrap_admin_password: str = ""
+
 
 settings = Settings()
+
+
+def crear_administrador_inicial_si_corresponde() -> None:
+    """Crea una única cuenta inicial únicamente si usuarios está vacío.
+
+    La contraseña llega desde una variable segura del proveedor de despliegue;
+    no se registra, no se devuelve por HTTP y nunca se almacena en el proyecto.
+    """
+    usuario = settings.bootstrap_admin_username.strip()
+    contrasena = settings.bootstrap_admin_password
+
+    if not usuario or not contrasena:
+        return
+    if len(contrasena) < 12:
+        raise RuntimeError("BOOTSTRAP_ADMIN_PASSWORD debe tener al menos 12 caracteres.")
+
+    try:
+        with engine.begin() as db:
+            tiene_tabla = db.execute(
+                text("SELECT to_regclass('public.usuarios') IS NOT NULL")
+            ).scalar_one()
+            if not tiene_tabla:
+                return
+
+            existe_usuario = db.execute(
+                text("SELECT EXISTS (SELECT 1 FROM usuarios)")
+            ).scalar_one()
+            if existe_usuario:
+                return
+
+            db.execute(
+                text("""
+                    INSERT INTO usuarios (nombre, usuario, password_hash, rol, activo)
+                    VALUES (:nombre, :usuario, :password_hash, 'administrador', true)
+                """),
+                {
+                    "nombre": settings.bootstrap_admin_name.strip() or "Administrador inicial",
+                    "usuario": usuario,
+                    "password_hash": crear_hash(contrasena),
+                },
+            )
+    except SQLAlchemyError as exc:
+        raise RuntimeError("No se pudo preparar el administrador inicial.") from exc
 
 
 # DATOS DE LAS PETICIONES
@@ -63,6 +112,7 @@ class TrabajoIA(BaseModel):
 # CLIENTE HTTP
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    crear_administrador_inicial_si_corresponde()
     app.state.http = httpx.AsyncClient(timeout=120)
     try:
         yield
