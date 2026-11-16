@@ -54,7 +54,13 @@ class AppConfig {
   static Future<void> loadLocalSettings() async {
     final prefs = await SharedPreferences.getInstance();
     final savedUrl = prefs.getString(baseUrlKey);
-    if (savedUrl != null && savedUrl.trim().isNotEmpty) setBaseUrl(savedUrl);
+    // Una IPA de distribución puede traer el servidor HTTPS oficial. Ese valor
+    // debe ganar frente a una IP local guardada por una instalación anterior.
+    if (MobileSyncConfig.localBackendUrl.isEmpty &&
+        savedUrl != null &&
+        savedUrl.trim().isNotEmpty) {
+      setBaseUrl(savedUrl);
+    }
     final savedRate = prefs.getDouble(itbisRateKey);
     if (savedRate != null && savedRate >= 0 && savedRate <= 1) {
       itbisRate = savedRate;

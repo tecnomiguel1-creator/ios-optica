@@ -27,9 +27,11 @@ jobs:
         working-directory: flutter_app
     env:
       # Valores públicos de configuración: jamás service_role ni contraseña.
-      SUPABASE_URL: ${{ vars.SUPABASE_URL }}
-      SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
-      LOCAL_BACKEND_URL: ${{ inputs.local_backend_url || vars.LOCAL_BACKEND_URL }}
+      # Se aceptan Variables o Secrets para evitar compilar accidentalmente
+      # con 127.0.0.1 si la configuración se guardó en la sección equivocada.
+      SUPABASE_URL: ${{ vars.SUPABASE_URL || secrets.SUPABASE_URL }}
+      SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY || secrets.SUPABASE_PUBLISHABLE_KEY }}
+      LOCAL_BACKEND_URL: ${{ inputs.local_backend_url || vars.LOCAL_BACKEND_URL || secrets.LOCAL_BACKEND_URL }}
     steps:
       - name: Obtener código
         uses: actions/checkout@v4
@@ -40,6 +42,16 @@ jobs:
           cache: true
       - name: Resolver dependencias
         run: flutter pub get
+      - name: Validar servidor móvil
+        run: |
+          if [ -z "$LOCAL_BACKEND_URL" ]; then
+            echo "::error::Falta LOCAL_BACKEND_URL en Variables, Secrets o al ejecutar el flujo."
+            exit 1
+          fi
+          case "$LOCAL_BACKEND_URL" in
+            https://*) ;;
+            *) echo "::error::LOCAL_BACKEND_URL debe comenzar con https://"; exit 1 ;;
+          esac
       - name: Analizar código
         # Flutter estable reciente informa la futura migración de Material
         # como "info". Se conservan errores y advertencias como bloqueantes.

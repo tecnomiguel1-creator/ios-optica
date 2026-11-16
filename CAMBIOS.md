@@ -10,6 +10,9 @@
   cobros o modificar inventario.
 - Se ocultó el acceso de expedientes desde la agenda móvil y se ajustaron los
   controles para evitar cortes en pantallas estrechas.
+- La compilación de IPA valida que incluya una `LOCAL_BACKEND_URL` HTTPS y
+  acepta la configuración tanto desde Variables como desde Secrets de GitHub.
+  Así no genera una IPA que apunte por error a `127.0.0.1`.
 
 ## Inicio de sesión iPhone con base cloud vacía - 16-11-2026
 

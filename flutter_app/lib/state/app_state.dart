@@ -90,7 +90,10 @@ class AppState extends ChangeNotifier {
   }
 
   Future<bool> checkBackendConnection() async {
-    _connectionError = 'Iniciando servidor local...';
+    final remoteServer = AppConfig.baseUrl.startsWith('https://');
+    _connectionError = remoteServer
+        ? 'Conectando al servidor seguro...'
+        : 'Iniciando servidor local...';
     notifyListeners();
     for (var attempt = 0; attempt < 6; attempt++) {
       try {
@@ -107,8 +110,10 @@ class AppState extends ChangeNotifier {
       } catch (_) {
         _isBackendConnected = false;
         _connectionError = attempt < 5
-            ? 'Iniciando servidor local...'
-            : 'No se pudo conectar al servidor local. Contacta soporte.';
+            ? (remoteServer
+                ? 'Conectando al servidor seguro...'
+                : 'Iniciando servidor local...')
+            : 'No se pudo conectar al servidor. Toca para reintentar.';
       }
       notifyListeners();
       await Future<void>.delayed(const Duration(seconds: 1));
