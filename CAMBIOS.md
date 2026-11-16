@@ -1,5 +1,14 @@
 # Cambios recientes
 
+## Inicio de sesión iPhone con base cloud vacía - 16-11-2026
+
+- FastAPI puede crear una única cuenta administradora inicial si y sólo si la
+  tabla `usuarios` no contiene registros y el proveedor seguro configura
+  `BOOTSTRAP_ADMIN_USERNAME` y `BOOTSTRAP_ADMIN_PASSWORD`.
+- La contraseña se hashea con Argon2, nunca se escribe en registros ni se
+  incorpora al repositorio. Las variables de bootstrap son temporales y deben
+  borrarse en Render tras comprobar el primer inicio de sesión.
+
 ## Historial de ventas POS - 15-11-2026
 
 - Versión **0.5.12**: se incorporó el botón visible **Historial** en el POS.

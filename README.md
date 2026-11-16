@@ -18,6 +18,11 @@
 - El archivo `render.yaml` y `docs/PUBLICAR_FASTAPI_RENDER.md` preparan FastAPI
   para una URL HTTPS compartida por el móvil y Windows, sin guardar la
   contraseña de Supabase en Git.
+- Para una base cloud creada sólo con el esquema (sin usuarios), FastAPI admite
+  una alta inicial de administrador mediante las variables privadas y
+  temporales `BOOTSTRAP_ADMIN_USERNAME` y `BOOTSTRAP_ADMIN_PASSWORD`. Sólo crea
+  esa cuenta si la tabla `usuarios` está vacía; después del primer acceso esas
+  variables deben eliminarse del proveedor de despliegue.
 
 Esta copia es el entorno de recuperación y desarrollo. Su conexión fue
 verificada contra `onlyeyes360_test`; no debe apuntarse a `onlyeyes360`.
