@@ -116,7 +116,11 @@ class AppState extends ChangeNotifier {
     return false;
   }
 
-  Future<void> login(String usuario, String contrasena) async {
+  Future<void> login(
+    String usuario,
+    String contrasena, {
+    bool startAtCashRegister = true,
+  }) async {
     _isLoading = true;
     notifyListeners();
 
@@ -124,9 +128,10 @@ class AppState extends ChangeNotifier {
       final authResponse = await _authService.login(usuario, contrasena);
       _currentUser = authResponse.usuario;
       _isAuthenticated = true;
-      // Un turno debe abrirse antes de operar una caja real. La pantalla guía
-      // apertura o muestra el turno vigente antes de entrar al resto del POS.
-      _activeSection = AppSection.cashRegister;
+      // En Windows se mantiene el control de turno antes de operar POS. La
+      // aplicación móvil es de supervisión y abre su resumen ligero.
+      _activeSection =
+          startAtCashRegister ? AppSection.cashRegister : AppSection.dashboard;
       await refreshLowStockCount();
     } finally {
       _isLoading = false;

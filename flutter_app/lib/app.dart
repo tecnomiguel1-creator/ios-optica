@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'core/config/app_config.dart';
 import 'core/theme/app_theme.dart';
+import 'core/utils/responsive.dart';
 import 'screens/admin/appointments_screen.dart';
 import 'screens/admin/cash_register_screen.dart';
 import 'screens/admin/lab_orders_screen.dart';
@@ -8,6 +9,8 @@ import 'screens/admin/settings_screen.dart';
 import 'screens/admin/reports_dashboard_screen.dart';
 import 'screens/auth/login_screen.dart';
 import 'screens/dashboard/dashboard_screen.dart';
+import 'screens/mobile/mobile_review_dashboard.dart';
+import 'screens/mobile/mobile_sales_history_screen.dart';
 import 'screens/inventory/product_list_screen.dart';
 import 'screens/patients/patient_list_screen.dart';
 import 'screens/purchases/purchase_list_screen.dart';
@@ -40,7 +43,20 @@ class _OnlyEyesAppState extends State<OnlyEyesApp> {
     super.dispose();
   }
 
-  Widget _buildActiveScreen() {
+  Widget _buildActiveScreen(BuildContext context) {
+    final mobile = !Responsive.isDesktop(context);
+    if (mobile) {
+      switch (_appState.activeSection) {
+        case AppSection.dashboard:
+          return MobileReviewDashboard(appState: _appState);
+        case AppSection.sales:
+          return const MobileSalesHistoryScreen();
+        case AppSection.appointments:
+          return AppointmentsScreen(appState: _appState);
+        default:
+          return MobileReviewDashboard(appState: _appState);
+      }
+    }
     switch (_appState.activeSection) {
       case AppSection.dashboard:
         return DashboardScreen(appState: _appState);
@@ -92,7 +108,7 @@ class _OnlyEyesAppState extends State<OnlyEyesApp> {
 
           return AdaptiveNavigationShell(
             appState: _appState,
-            child: _buildActiveScreen(),
+            child: _buildActiveScreen(context),
           );
         },
       ),

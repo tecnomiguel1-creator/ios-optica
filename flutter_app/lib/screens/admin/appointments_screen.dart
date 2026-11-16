@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/utils/responsive.dart';
 import '../../models/clinic_models.dart';
 import '../../models/patient_model.dart';
 import '../../services/admin_service.dart';
@@ -424,10 +425,11 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final mobile = Responsive.isMobile(context);
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: EdgeInsets.all(mobile ? 16 : 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -457,11 +459,12 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                   ],
                 ),
                 Wrap(spacing: 8, runSpacing: 8, children: [
-                  OutlinedButton.icon(
-                      onPressed: () =>
-                          widget.appState.setActiveSection(AppSection.patients),
-                      icon: const Icon(Icons.description_outlined, size: 18),
-                      label: const Text('Expedientes y recetas')),
+                  if (!mobile)
+                    OutlinedButton.icon(
+                        onPressed: () => widget.appState
+                            .setActiveSection(AppSection.patients),
+                        icon: const Icon(Icons.description_outlined, size: 18),
+                        label: const Text('Expedientes y recetas')),
                   ElevatedButton.icon(
                       onPressed: _openNewAppointmentDialog,
                       icon: const Icon(Icons.add, size: 18),
@@ -577,24 +580,25 @@ class _AppointmentsScreenState extends State<AppointmentsScreen> {
                                 trailing: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Chip(
-                                      label: Text(app.estado.toUpperCase()),
-                                      backgroundColor: isCompleted
-                                          ? AppColors.successLight
-                                          : (isCancelled
-                                              ? AppColors.dangerLight
-                                              : AppColors.infoLight),
-                                      labelStyle: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.bold,
-                                        color: isCompleted
-                                            ? const Color(0xFF065F46)
+                                    if (!mobile)
+                                      Chip(
+                                        label: Text(app.estado.toUpperCase()),
+                                        backgroundColor: isCompleted
+                                            ? AppColors.successLight
                                             : (isCancelled
-                                                ? const Color(0xFF991B1B)
-                                                : const Color(0xFF1E40AF)),
+                                                ? AppColors.dangerLight
+                                                : AppColors.infoLight),
+                                        labelStyle: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          color: isCompleted
+                                              ? const Color(0xFF065F46)
+                                              : (isCancelled
+                                                  ? const Color(0xFF991B1B)
+                                                  : const Color(0xFF1E40AF)),
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(width: 8),
+                                    if (!mobile) const SizedBox(width: 8),
                                     PopupMenuButton<String>(
                                       icon:
                                           const Icon(Icons.more_vert, size: 20),

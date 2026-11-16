@@ -31,7 +31,8 @@ class AdaptiveNavigationShell extends StatelessWidget {
       );
     }
 
-    // Layout para Android y pantallas móviles/tablets
+    // El teléfono se limita a consulta, historial y agenda. Los módulos de
+    // operación completa permanecen exclusivamente en Windows.
     return Scaffold(
       appBar: AppBar(
         title: Text(_getSectionTitle(appState.activeSection)),
@@ -53,64 +54,31 @@ class AdaptiveNavigationShell extends StatelessWidget {
               appState.setActiveSection(AppSection.dashboard);
               break;
             case 1:
-              appState.setActiveSection(AppSection.patients);
+              appState.setActiveSection(AppSection.sales);
               break;
             case 2:
-              appState.setActiveSection(AppSection.inventory);
-              break;
-            case 3:
-              appState.setActiveSection(AppSection.sales);
+              appState.setActiveSection(AppSection.appointments);
               break;
           }
         },
         type: BottomNavigationBarType.fixed,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: AppColors.textSecondary,
-        items: [
-          const BottomNavigationBarItem(
+        items: const [
+          BottomNavigationBarItem(
             icon: Icon(Icons.dashboard_outlined),
             activeIcon: Icon(Icons.dashboard),
             label: 'Inicio',
           ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.badge_outlined),
-            activeIcon: Icon(Icons.badge),
-            label: 'Pacientes',
+          BottomNavigationBarItem(
+            icon: Icon(Icons.receipt_long_outlined),
+            activeIcon: Icon(Icons.receipt_long),
+            label: 'Ventas',
           ),
           BottomNavigationBarItem(
-            icon: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                const Icon(Icons.inventory_2_outlined),
-                if (appState.lowStockCount > 0)
-                  Positioned(
-                    right: -4,
-                    top: -4,
-                    child: Container(
-                      padding: const EdgeInsets.all(3),
-                      decoration: const BoxDecoration(
-                        color: AppColors.danger,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Text(
-                        '${appState.lowStockCount}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 9,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            activeIcon: const Icon(Icons.inventory_2),
-            label: 'Inventario',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.point_of_sale_outlined),
-            activeIcon: Icon(Icons.point_of_sale),
-            label: 'POS',
+            icon: Icon(Icons.calendar_month_outlined),
+            activeIcon: Icon(Icons.calendar_month),
+            label: 'Citas',
           ),
         ],
       ),
@@ -121,14 +89,12 @@ class AdaptiveNavigationShell extends StatelessWidget {
     switch (section) {
       case AppSection.dashboard:
         return 0;
-      case AppSection.patients:
-        return 1;
-      case AppSection.inventory:
-      case AppSection.purchases:
-        return 2;
       case AppSection.sales:
+        return 1;
+      case AppSection.appointments:
+        return 2;
       default:
-        return 3;
+        return 0;
     }
   }
 
@@ -143,7 +109,7 @@ class AdaptiveNavigationShell extends StatelessWidget {
       case AppSection.purchases:
         return 'Compras y Proveedores';
       case AppSection.sales:
-        return 'Punto de Venta (POS)';
+        return 'Historial de ventas';
       case AppSection.appointments:
         return 'Clientes y Citas';
       case AppSection.labOrders:
@@ -499,116 +465,12 @@ class _MobileDrawer extends StatelessWidget {
               ],
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.dashboard_outlined),
-            title: const Text('Dashboard'),
-            onTap: () {
-              appState.setActiveSection(AppSection.dashboard);
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.medical_services_outlined),
-            title: const Text('Pacientes y Recetas'),
-            onTap: () {
-              appState.setActiveSection(AppSection.patients);
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.calendar_month_outlined),
-            title: const Text('Clientes y Citas'),
-            onTap: () {
-              appState.setActiveSection(AppSection.appointments);
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.inventory_2_outlined),
-            title: const Text('Inventario'),
-            trailing: appState.lowStockCount > 0
-                ? Text('${appState.lowStockCount}',
-                    style: const TextStyle(
-                        color: AppColors.danger, fontWeight: FontWeight.bold))
-                : null,
-            onTap: () {
-              appState.setActiveSection(AppSection.inventory);
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.local_shipping_outlined),
-            title: const Text('Compras y Proveedores'),
-            onTap: () {
-              appState.setActiveSection(AppSection.purchases);
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.request_quote_outlined),
-            title: const Text('Cuentas por pagar'),
-            onTap: () {
-              appState.setActiveSection(AppSection.accountsPayable);
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.point_of_sale_outlined),
-            title: const Text('Punto de Venta (POS)'),
-            onTap: () {
-              appState.setActiveSection(AppSection.sales);
-              Navigator.pop(context);
-            },
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.build_outlined),
-            title: const Text('Laboratorio óptico'),
-            onTap: () {
-              appState.setActiveSection(AppSection.labOrders);
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.account_balance_wallet_outlined),
-            title: const Text('Caja Diaria'),
-            onTap: () {
-              appState.setActiveSection(AppSection.cashRegister);
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.bar_chart_outlined),
-            title: const Text('Reportes y Estadísticas'),
-            onTap: () {
-              appState.setActiveSection(AppSection.reports);
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.settings_outlined),
-            title: const Text('Administración'),
-            onTap: () {
-              appState.setActiveSection(AppSection.settings);
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.storefront_outlined),
-            title: const Text('Datos del negocio'),
-            onTap: () {
-              appState.setActiveSection(AppSection.businessData);
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.health_and_safety_outlined),
-            title: const Text('Seguros'),
-            onTap: () {
-              appState.setActiveSection(AppSection.insurance);
-              Navigator.pop(context);
-            },
-          ),
+          _item(context, Icons.dashboard_outlined, 'Inicio',
+              AppSection.dashboard),
+          _item(context, Icons.receipt_long_outlined, 'Historial de ventas',
+              AppSection.sales),
+          _item(context, Icons.calendar_month_outlined, 'Agenda y citas',
+              AppSection.appointments),
           const Divider(),
           ListTile(
             leading: const Icon(Icons.logout, color: AppColors.danger),
@@ -623,4 +485,19 @@ class _MobileDrawer extends StatelessWidget {
       ),
     );
   }
+
+  Widget _item(
+    BuildContext context,
+    IconData icon,
+    String title,
+    AppSection section,
+  ) =>
+      ListTile(
+        leading: Icon(icon),
+        title: Text(title),
+        onTap: () {
+          appState.setActiveSection(section);
+          Navigator.pop(context);
+        },
+      );
 }

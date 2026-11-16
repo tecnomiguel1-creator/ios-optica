@@ -23,6 +23,10 @@
   temporales `BOOTSTRAP_ADMIN_USERNAME` y `BOOTSTRAP_ADMIN_PASSWORD`. Sólo crea
   esa cuenta si la tabla `usuarios` está vacía; después del primer acceso esas
   variables deben eliminarse del proveedor de despliegue.
+- La experiencia iPhone es deliberadamente ligera: **Inicio** con indicadores,
+  gráfico de ventas y citas de hoy; **Historial de ventas** sólo de consulta;
+  y **Agenda y citas** para consultar o agendar. POS, inventario, caja,
+  compras y administración siguen siendo operaciones de Windows.
 
 Esta copia es el entorno de recuperación y desarrollo. Su conexión fue
 verificada contra `onlyeyes360_test`; no debe apuntarse a `onlyeyes360`.

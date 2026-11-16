@@ -1,5 +1,16 @@
 # Cambios recientes
 
+## Vista de supervisión para iPhone - 16-11-2026
+
+- El iPhone ya no expone la navegación completa de Windows. La barra inferior
+  contiene Inicio, Ventas y Citas; el menú lateral contiene las mismas opciones
+  y cierre de sesión.
+- Inicio muestra indicadores, un gráfico compacto de ventas, citas de hoy y la
+  acción para agendar. El historial de ventas es de sólo lectura y evita crear
+  cobros o modificar inventario.
+- Se ocultó el acceso de expedientes desde la agenda móvil y se ajustaron los
+  controles para evitar cortes en pantallas estrechas.
+
 ## Inicio de sesión iPhone con base cloud vacía - 16-11-2026
 
 - FastAPI puede crear una única cuenta administradora inicial si y sólo si la
