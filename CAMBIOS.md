@@ -143,4 +143,7 @@
   suben contraseñas o claves de servicio.
 - Añadido el flujo de GitHub Actions para construir una IPA sin firmar y
   descargarla como artefacto para su firma posterior por el propietario.
+- Generado el SQL completo de las 41 tablas desde `onlyeyes360_test`, sin
+  registros ni secretos, y con RLS activado para impedir acceso público directo
+  a ventas, Caja, pacientes e inventario.
 

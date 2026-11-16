@@ -13,6 +13,8 @@
   claves de servicio no se incluyen en el repositorio ni en el artefacto.
 - La guía de despliegue y las condiciones de sincronización están en
   `docs/IOS_MOVIL_SUPABASE.md`.
+- El SQL completo y seguro para crear el esquema remoto sin datos está en
+  `supabase/migrations/001_onlyeyes360_test_schema.sql`.
 
 Esta copia es el entorno de recuperación y desarrollo. Su conexión fue
 verificada contra `onlyeyes360_test`; no debe apuntarse a `onlyeyes360`.

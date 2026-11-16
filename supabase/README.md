@@ -1,5 +1,17 @@
 # Preparación de Supabase (sin datos reales)
 
+## SQL listo para SQL Editor
+
+El archivo `migrations/001_onlyeyes360_test_schema.sql` es el esquema completo
+exportado de `onlyeyes360_test` el 16-11-2026. Incluye 41 tablas, relaciones,
+índices, secuencias y las protecciones RLS necesarias. No incluye filas,
+cuentas, contraseñas, ventas ni respaldos.
+
+En el proyecto **ONLY EYES 360 Mobile**, abra SQL Editor, pegue el contenido
+completo del archivo y pulse **Run** una sola vez. Tras ejecutarlo, configure
+FastAPI con la cadena de conexión de Supabase fuera del repositorio. No cambie
+la base de producción ni copie datos reales durante esta primera carga.
+
 Esta carpeta no conecta Flutter ni el bot directamente a PostgreSQL. La futura
 instancia Supabase será accesible únicamente por FastAPI usando `SUPABASE_DB_URL`
 como variable de entorno externa al código.
