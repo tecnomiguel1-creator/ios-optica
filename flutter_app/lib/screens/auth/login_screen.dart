@@ -42,6 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
       await widget.appState.login(
         _userController.text.trim(),
         _passwordController.text,
+        startAtCashRegister: Responsive.isDesktop(context),
       );
       if (!mounted) return;
     } catch (e) {
