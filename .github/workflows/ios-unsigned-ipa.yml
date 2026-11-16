@@ -19,7 +19,9 @@ permissions:
 jobs:
   build-unsigned-ipa:
     name: Compilar IPA sin firmar
-    runs-on: macos-15
+    # macos-15 usa Apple Silicon; el pool estuvo sin capacidad. El ejecutor
+    # Intel es compatible con la IPA sin firma y evita esa cola específica.
+    runs-on: macos-15-intel
     defaults:
       run:
         working-directory: flutter_app
