@@ -41,7 +41,9 @@ jobs:
       - name: Resolver dependencias
         run: flutter pub get
       - name: Analizar código
-        run: flutter analyze
+        # Flutter estable reciente informa la futura migración de Material
+        # como "info". Se conservan errores y advertencias como bloqueantes.
+        run: flutter analyze --no-fatal-infos
       - name: Ejecutar pruebas
         run: flutter test --concurrency=1
       - name: Construir aplicación iOS sin firma
