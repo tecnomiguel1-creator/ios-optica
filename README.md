@@ -15,6 +15,9 @@
   `docs/IOS_MOVIL_SUPABASE.md`.
 - El SQL completo y seguro para crear el esquema remoto sin datos está en
   `supabase/migrations/001_onlyeyes360_test_schema.sql`.
+- El archivo `render.yaml` y `docs/PUBLICAR_FASTAPI_RENDER.md` preparan FastAPI
+  para una URL HTTPS compartida por el móvil y Windows, sin guardar la
+  contraseña de Supabase en Git.
 
 Esta copia es el entorno de recuperación y desarrollo. Su conexión fue
 verificada contra `onlyeyes360_test`; no debe apuntarse a `onlyeyes360`.

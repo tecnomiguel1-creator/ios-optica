@@ -146,4 +146,7 @@
 - Generado el SQL completo de las 41 tablas desde `onlyeyes360_test`, sin
   registros ni secretos, y con RLS activado para impedir acceso público directo
   a ventas, Caja, pacientes e inventario.
+- Añadida definición `render.yaml` para publicar FastAPI como servicio HTTPS
+  con las variables privadas `DATABASE_URL` y `JWT_SECRET_KEY` fuera del
+  repositorio.
 
