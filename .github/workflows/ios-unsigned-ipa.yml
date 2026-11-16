@@ -1,0 +1,63 @@
+name: IPA iOS sin firmar
+
+on:
+  workflow_dispatch:
+    inputs:
+      local_backend_url:
+        description: 'URL HTTPS o LAN del FastAPI compartido (sin secretos)'
+        required: false
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - 'flutter_app/**'
+      - '.github/workflows/ios-unsigned-ipa.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  build-unsigned-ipa:
+    name: Compilar IPA sin firmar
+    runs-on: macos-15
+    defaults:
+      run:
+        working-directory: flutter_app
+    env:
+      # Valores públicos de configuración: jamás service_role ni contraseña.
+      SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+      SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+      LOCAL_BACKEND_URL: ${{ inputs.local_backend_url || vars.LOCAL_BACKEND_URL }}
+    steps:
+      - name: Obtener código
+        uses: actions/checkout@v4
+      - name: Instalar Flutter estable
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Resolver dependencias
+        run: flutter pub get
+      - name: Analizar código
+        run: flutter analyze
+      - name: Ejecutar pruebas
+        run: flutter test --concurrency=1
+      - name: Construir aplicación iOS sin firma
+        run: >-
+          flutter build ios --release --no-codesign
+          --dart-define=SUPABASE_URL="$SUPABASE_URL"
+          --dart-define=SUPABASE_PUBLISHABLE_KEY="$SUPABASE_PUBLISHABLE_KEY"
+          --dart-define=LOCAL_BACKEND_URL="$LOCAL_BACKEND_URL"
+      - name: Empaquetar IPA sin firmar
+        run: |
+          rm -rf Payload
+          mkdir -p Payload
+          cp -R build/ios/iphoneos/Runner.app Payload/
+          ditto -c -k --sequesterRsrc --keepParent Payload ONLY_EYES_360_unsigned.ipa
+      - name: Publicar IPA como artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: ONLY_EYES_360_iOS_unsigned
+          path: flutter_app/ONLY_EYES_360_unsigned.ipa
+          if-no-files-found: error
+          retention-days: 30
